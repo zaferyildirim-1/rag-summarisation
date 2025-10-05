@@ -1,6 +1,6 @@
 from langchain.prompts import PromptTemplate
 
-# Chunk-level / stuff-chain prompt (taken from your notebook and tightened)
+# Chunk-level / stuff-chain prompt (tuned for scientific text)
 CHUNK_SUMMARY_PROMPT = PromptTemplate(
     template="""
 Write a summary of the following text in about 750 tokens.
@@ -47,7 +47,7 @@ Return an improved summary; if new content contradicts the draft, update accordi
     input_variables=["existing_summary", "new_content"],
 )
 
-# Simple length instruction constants (used by the app to pick short/medium/long)
+# Standard length instructions you can use from the UI
 INSTRUCTION_SHORT = "Provide a concise summary in 3-5 sentences."
 INSTRUCTION_MEDIUM = "Provide a summary with key bullets and a short paragraph (approx 150-300 words)."
 INSTRUCTION_LONG = "Provide a detailed summary with a title and bullet points (~600-1000 words)."
