@@ -7,58 +7,34 @@ import tempfile
 import time
 from datetime import datetime
 
+# after the env-vars, you can import streamlit and others
 import streamlit as st
 
-# Try to import the rag_bert package modules (package layout) and fallback to top-level filenames
+# --- PDF loader imports with fallback ---
+PDFLoader = None
 try:
-    from rag_bert.prompts_summarize import (
-        CHUNK_SUMMARY_PROMPT,
-        COMBINE_SUMMARY_PROMPT,
-        REFINE_PROMPT,
-        INSTRUCTION_SHORT,
-        INSTRUCTION_MEDIUM,
-        INSTRUCTION_LONG,
-    )
-    from rag_bert.summarize_pipeline import (
-        read_pdf,
-        split_documents,
-        build_chroma,
-        load_persisted_chroma,
-        summarize_with_chain,
-    )
-except Exception:
-    # fallback: if files are top-level modules (rag_bert_prompts_summarize.py etc.)
-    try:
-        from rag_bert_prompts_summarize import (
-            CHUNK_SUMMARY_PROMPT,
-            COMBINE_SUMMARY_PROMPT,
-            REFINE_PROMPT,
-            INSTRUCTION_SHORT,
-            INSTRUCTION_MEDIUM,
-            INSTRUCTION_LONG,
-        )
-        from rag_bert_summarize_pipeline import (
-            read_pdf,
-            split_documents,
-            build_chroma,
-            load_persisted_chroma,
-            summarize_with_chain,
-        )
-    except Exception:
-        st.error("Could not import local prompt/pipeline modules. Ensure `rag_bert` package or top-level modules exist.")
-        raise
-
-# Wrap the optional import for PDF loader to give clearer instructions if missing
-try:
-    # used by read_pdf inside pipeline; imported here for early error messages if absent
-    from langchain_community.document_loaders import PyPDFium2Loader  # noqa: F401
+    from langchain_community.document_loaders import PyPDFium2Loader as PDFLoader
 except Exception as e:
-    st.error(
-        "Missing runtime dependency `langchain-community` or `pypdfium2` required for PDF loading.\n"
-        "Please ensure your `requirements.txt` includes langchain-community and pypdfium2 and redeploy.\n"
-        f"Original import error: {e}"
+    st.warning(
+        "Optional dependency `langchain_community` not ready yet; "
+        "falling back to a basic PDF text extractor."
     )
-    raise
+    PDFLoader = None
+
+def load_pdf(path: str):
+    if PDFLoader is not None:
+        return PDFLoader(path).load()
+
+    # Fallback extractor if langchain_community isn't importable yet
+    import pypdfium2 as pdfium
+    from langchain_core.documents import Document
+    pdf = pdfium.PdfDocument(path)
+    parts = []
+    for i in range(len(pdf)):
+        page = pdf[i]
+        tp = page.get_textpage()
+        parts.append(tp.get_text_range())
+    return [Document(page_content="\n".join(parts), metadata={"source": path})]
 
 st.set_page_config(page_title="RAG Summarization", layout="wide")
 st.title("📄 RAG Summarization")
