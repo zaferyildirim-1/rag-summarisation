@@ -7,7 +7,7 @@ from datetime import datetime
 import streamlit as st
 
 # Langchain / embeddings / vectorstore
-from langchain_community.document_loaders import pypdfium2
+from langchain_community.document_loaders import PyPDFium2Loader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.vectorstores import Chroma
