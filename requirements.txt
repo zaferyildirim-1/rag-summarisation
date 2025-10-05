@@ -1,5 +1,4 @@
 streamlit==1.50.0
-langchain==0.3.27
 langchain-community==0.3.30
 langchain-openai==0.3.34
 openai>=2.0.0
@@ -9,3 +8,6 @@ pandas
 plotly
 tiktoken
 python-dotenv
+langchain==0.3.27
+langchain-core==0.3.78
+langchain-text-splitters==0.3.11
