@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.env
+venv/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints
+
+# Chroma/DB
+chroma_store/
+chroma_store_*
+
+# OS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
