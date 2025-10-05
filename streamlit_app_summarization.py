@@ -1,3 +1,7 @@
+# --- must be at the very top ---
+import os
+os.environ["STREAMLIT_SERVER_FILEWATCHERTYPE"] = "poll"   # avoid inotify ENOSPC
+os.environ["STREAMLIT_SERVER_RUNONSAVE"] = "false"        # reduce watch activity
 import os
 import tempfile
 import time
